@@ -34,7 +34,6 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: yarn
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn check
@@ -85,4 +84,3 @@ jobs:
           test -s "$binary"
           shasum -a 256 "$binary" > "$binary.sha256"
           test -s "$binary.sha256"
-
