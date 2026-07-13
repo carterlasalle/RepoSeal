@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="240" viewBox="0 0 960 240" role="img" aria-labelledby="title description">
+  <title id="title">RepoSeal</title>
+  <desc id="description">A violet security seal beside the RepoSeal wordmark and the phrase Verify before agents install.</desc>
+  <defs>
+    <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#5b21b6"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="240" rx="28" fill="#09090b"/>
+  <circle cx="122" cy="120" r="78" fill="none" stroke="url(#ring)" stroke-width="8"/>
+  <path d="M122 54 174 73v40c0 39-21 65-52 78-31-13-52-39-52-78V73z" fill="url(#shield)"/>
+  <path d="m95 119 18 18 38-43" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="230" y="116" fill="#fafafa" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="68" font-weight="750" letter-spacing="-2">RepoSeal</text>
+  <text x="234" y="160" fill="#a1a1aa" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="24" letter-spacing="1">VERIFY BEFORE AGENTS INSTALL</text>
+</svg>
