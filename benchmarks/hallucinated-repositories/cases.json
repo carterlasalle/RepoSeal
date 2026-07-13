@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "category": "hallucinated-repositories",
+  "safety": "inert",
+  "cases": [
+    { "id": "HS-001", "requested": "github:project/project", "canonical": "github:actual-company/project", "expect": "blocked", "signals": ["RS-IDENTITY-MISMATCH"] },
+    { "id": "HS-002", "requested": "github:project-ai/project", "canonical": "github:actual-company/project", "expect": "blocked", "signals": ["RS-CANONICAL-OWNER-MISMATCH"] },
+    { "id": "HS-003", "requested": "github:project-official/project", "canonical": "github:actual-company/project", "expect": "blocked", "signals": ["RS-REPOSITORY-VERY-YOUNG"] },
+    { "id": "HS-004", "requested": "github:actual-company/proejct", "canonical": "github:actual-company/project", "expect": "blocked", "signals": ["RS-HALLUSQUAT-NAME-SIMILARITY"] }
+  ]
+}
+

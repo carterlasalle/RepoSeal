@@ -1,0 +1,17 @@
+version: 1
+scan:
+  - SKILL.md
+  - scripts
+  - references
+  - examples
+block:
+  - instruction-override
+  - hidden-safety-disable
+  - download-to-shell
+  - credential-path-access
+lock:
+  - instruction-hash
+  - transitive-dependencies
+  - permissions
+  - provenance
+

@@ -1,0 +1,21 @@
+version: 1
+maximumCandidates: 256
+ownerSubstitutions:
+  - project
+  - project-ai
+  - projecthq
+  - project-official
+projectTransforms:
+  - deletion
+  - adjacent-transposition
+  - remove-hyphens
+  - underscore-to-hyphen
+  - pluralize
+  - append-ai
+  - append-official
+  - append-cli
+invariants:
+  - canonical-owner-mismatch-blocks
+  - repository-not-found-blocks
+  - popularity-never-overrides-critical
+

@@ -1,0 +1,15 @@
+version: 1
+criticalAgeHours: 24
+youngAgeDays: 30
+canonicalCandidate:
+  minimumStars: 1000
+  requestedStarMultiplier: 20
+  minimumAgeLeadDays: 90
+signals:
+  - fork
+  - archived
+  - owner-mismatch
+  - registry-source-mismatch
+  - unsigned-release
+  - missing-provenance
+

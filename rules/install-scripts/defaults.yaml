@@ -1,0 +1,14 @@
+version: 1
+critical:
+  - download-to-shell
+  - credential-path-access
+  - docker-socket-access
+  - shell-startup-persistence
+high:
+  - encoded-execution
+  - broad-environment-enumeration
+  - package-lifecycle-script
+medium:
+  - network-download
+  - subprocess-execution
+
