@@ -1,0 +1,6 @@
+# Security-critical enforcement and trust formats require owner review.
+/.github/ @carterlasalle
+/crates/ @carterlasalle
+/spec/ @carterlasalle
+/rules/ @carterlasalle
+/SECURITY.md @carterlasalle

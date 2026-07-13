@@ -1,0 +1,38 @@
+name: Defensive rule proposal
+description: Propose a safe, reproducible HalluSquat or installer detection rule.
+title: "rule: "
+labels: [rule, research]
+body:
+  - type: dropdown
+    id: family
+    attributes:
+      label: Rule family
+      options: [Repository identity, HalluSquatting, Install behavior, Agent skill, MCP or plugin, Provenance]
+    validations:
+      required: true
+  - type: textarea
+    id: threat
+    attributes:
+      label: Threat and authoritative source
+    validations:
+      required: true
+  - type: textarea
+    id: fixture
+    attributes:
+      label: Minimal inert reproduction
+      description: Use reserved domains, synthetic identities, and non-executable strings only.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Expected signal, severity, decision, and false-positive controls
+    validations:
+      required: true
+  - type: checkboxes
+    id: ethics
+    attributes:
+      label: Research safety
+      options:
+        - label: This contains no deployable payload, credential, or targeting data.
+          required: true

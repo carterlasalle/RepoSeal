@@ -1,0 +1,35 @@
+name: Bug report
+description: Report reproducible non-sensitive incorrect behavior.
+title: "bug: "
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: RepoSeal version and platform
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Redacted output
+      description: Remove credentials, private URLs, and private repository material.
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Triage
+      options:
+        - label: This is not an exploitable security bypass; I used private reporting if it is.
+          required: true

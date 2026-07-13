@@ -1,0 +1,42 @@
+name: False positive
+description: Report a legitimate canonical source that RepoSeal reviewed or blocked.
+title: "false positive: "
+labels: [false-positive, resolver]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, private repository contents, or live malicious payloads.
+  - type: input
+    id: version
+    attributes:
+      label: RepoSeal version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: requested
+    attributes:
+      label: Requested typed identity
+      placeholder: github:owner/project
+    validations:
+      required: true
+  - type: input
+    id: canonical
+    attributes:
+      label: Canonical identity and authoritative reference
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Redacted verification report
+      description: Remove tokens, private URLs, local paths, and personal information.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed secrets and private source material.
+          required: true
