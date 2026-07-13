@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reposeal.dev/spec/verification-report-v1.schema.json",
+  "title": "RepoSeal Verification Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request", "decision", "risk", "signals", "evidence", "report_hash"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "request": { "type": "object" },
+    "canonical": { "type": ["object", "null"] },
+    "decision": { "enum": ["verified", "review", "blocked"] },
+    "risk": { "enum": ["low", "medium", "high", "critical"] },
+    "signals": { "type": "array", "items": { "type": "object" } },
+    "evidence": { "type": "array", "items": { "type": "object" } },
+    "report_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  }
+}
+
