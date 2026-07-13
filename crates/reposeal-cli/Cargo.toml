@@ -1,0 +1,40 @@
+[package]
+name = "reposeal"
+description = "Supply-chain firewall for AI coding agents"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+default-run = "reposeal"
+
+[[bin]]
+name = "reposeal"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+chrono.workspace = true
+clap.workspace = true
+reposeal-core = { version = "1.0.0", path = "../reposeal-core" }
+reposeal-lockfile = { version = "1.0.0", path = "../reposeal-lockfile" }
+reposeal-policy = { version = "1.0.0", path = "../reposeal-policy" }
+reposeal-provenance = { version = "1.0.0", path = "../reposeal-provenance" }
+reposeal-resolver = { version = "1.0.0", path = "../reposeal-resolver" }
+reposeal-sandbox = { version = "1.0.0", path = "../reposeal-sandbox" }
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml_ng.workspace = true
+shell-words.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+url.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
+

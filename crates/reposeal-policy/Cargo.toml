@@ -1,0 +1,22 @@
+[package]
+name = "reposeal-policy"
+description = "Strict deterministic install policy for RepoSeal"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+reposeal-core = { version = "1.0.0", path = "../reposeal-core" }
+reposeal-resolver = { version = "1.0.0", path = "../reposeal-resolver" }
+serde.workspace = true
+serde_yaml_ng.workspace = true
+thiserror.workspace = true
+url.workspace = true
+
+[dev-dependencies]
+chrono.workspace = true
+
+[lints]
+workspace = true

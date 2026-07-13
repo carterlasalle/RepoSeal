@@ -1,0 +1,24 @@
+[package]
+name = "reposeal-lockfile"
+description = "Strict atomic universal agent dependency lockfile"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+chrono.workspace = true
+reposeal-core = { version = "1.0.0", path = "../reposeal-core" }
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml_ng.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
+

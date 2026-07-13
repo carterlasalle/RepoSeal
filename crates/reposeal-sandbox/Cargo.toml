@@ -1,0 +1,23 @@
+[package]
+name = "reposeal-sandbox"
+description = "Static installer scanning and strong sandbox planning for RepoSeal"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+regex.workspace = true
+reposeal-core = { version = "1.0.0", path = "../reposeal-core" }
+serde.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+walkdir.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
+
