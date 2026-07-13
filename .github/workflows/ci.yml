@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.97.0
+      - uses: dtolnay/rust-toolchain@1.100.0
         with:
           components: rustfmt, clippy
       - run: cargo fmt --all -- --check
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.97.0
+      - uses: dtolnay/rust-toolchain@1.100.0
       - uses: taiki-e/install-action@cargo-deny
       - run: cargo deny check advisories bans licenses sources
 
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.97.0
+      - uses: dtolnay/rust-toolchain@1.100.0
       - run: cargo run --locked -p reposeal -- benchmark --agent github-actions --json | tee benchmark.json
       - run: python3 -c 'import json; r=json.load(open("benchmark.json")); assert r["grade"] == "A" and r["hallusquats_blocked"] == 100'
 
@@ -75,7 +75,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.97.0
+      - uses: dtolnay/rust-toolchain@1.100.0
         with:
           targets: ${{ matrix.target }}
       - run: cargo build --locked --release -p reposeal --target ${{ matrix.target }}
