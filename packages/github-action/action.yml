@@ -1,0 +1,29 @@
+name: RepoSeal Audit
+description: Verify agent.lock and scan repositories, skills, MCP configs, and acquisition scripts
+author: Carter LaSalle
+inputs:
+  version:
+    description: RepoSeal release version
+    required: false
+    default: "1.0.0"
+  policy:
+    description: Optional RepoSeal policy path
+    required: false
+    default: ".reposeal/policy.yaml"
+  lockfile:
+    description: agent.lock path
+    required: false
+    default: "agent.lock"
+runs:
+  using: composite
+  steps:
+    - name: Install pinned RepoSeal
+      shell: bash
+      run: "${{ github.action_path }}/run.sh" install "${{ inputs.version }}"
+    - name: Verify agent dependency state
+      shell: bash
+      run: "${{ github.action_path }}/run.sh" audit "${{ inputs.policy }}" "${{ inputs.lockfile }}"
+branding:
+  icon: shield
+  color: purple
+

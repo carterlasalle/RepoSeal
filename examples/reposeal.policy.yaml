@@ -1,0 +1,20 @@
+apiVersion: reposeal.dev/v1
+kind: RepoSealPolicy
+defaults:
+  mode: enforce
+  unresolved: block
+  blockHigh: false
+  requireLockOffline: true
+  requireStrongSandbox: true
+rules:
+  allowComponents:
+    - github:astral-sh/uv
+    - pypi:uv
+  denyComponents: []
+  denyOwners:
+    - known-malicious-owner
+  denyDomains:
+    - downloads.invalid
+  trustedDomains:
+    - astral.sh
+

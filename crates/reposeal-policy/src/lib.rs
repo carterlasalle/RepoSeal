@@ -198,7 +198,13 @@ impl CompiledPolicy {
                         .to_owned(),
             });
         }
-        let risk = match maximum {
+        let final_maximum = resolution
+            .signals
+            .iter()
+            .map(|signal| signal.severity)
+            .max()
+            .unwrap_or(Severity::Info);
+        let risk = match final_maximum {
             Severity::Critical => Risk::Critical,
             Severity::High => Risk::High,
             Severity::Medium => Risk::Medium,

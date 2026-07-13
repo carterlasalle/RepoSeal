@@ -1,0 +1,18 @@
+{
+  "name": "reposeal-workspace",
+  "private": true,
+  "packageManager": "yarn@4.9.2",
+  "workspaces": [
+    "packages/typescript-sdk",
+    "packages/vscode-extension",
+    "packages/opencode-plugin"
+  ],
+  "scripts": {
+    "build": "yarn workspace @reposeal/sdk build && yarn workspace reposeal-vscode build && yarn workspace @reposeal/opencode-plugin build",
+    "test": "yarn workspace @reposeal/sdk test && yarn workspace reposeal-vscode test && yarn workspace @reposeal/opencode-plugin test",
+    "check": "yarn build && yarn test"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

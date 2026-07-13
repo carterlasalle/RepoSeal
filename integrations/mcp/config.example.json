@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "reposeal": {
+      "command": "reposeal",
+      "args": ["mcp"]
+    }
+  }
+}
+

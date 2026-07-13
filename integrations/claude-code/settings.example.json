@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "python3 /absolute/path/to/reposeal_hook.py", "timeout": 30 }
+        ]
+      }
+    ]
+  }
+}
+

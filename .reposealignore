@@ -1,0 +1,6 @@
+# Safe research fixtures and scanner self-tests intentionally contain inert threat strings.
+# This file is passed explicitly by CI; RepoSeal never discovers ignores from untrusted content.
+benchmarks/
+crates/reposeal-cli/tests/cli_contract.rs
+crates/reposeal-sandbox/src/lib.rs
+docs/SPECIFICATION.md

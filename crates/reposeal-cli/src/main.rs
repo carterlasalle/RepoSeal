@@ -25,7 +25,7 @@ use reposeal_lockfile::{
 use reposeal_policy::CompiledPolicy;
 use reposeal_provenance::CapabilityManifest;
 use reposeal_resolver::{Resolution, Resolver, ResolverConfig};
-use reposeal_sandbox::{SandboxBackend, sandbox_plan, scan_path};
+use reposeal_sandbox::{SandboxBackend, sandbox_plan, scan_path, scan_path_with_ignore};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use tempfile::TempDir;
@@ -76,6 +76,8 @@ enum Commands {
     Lock(LockArgs),
     /// Validate capability manifests and external identity metadata.
     Manifest(ManifestArgs),
+    /// Validate policy-as-code before enforcing it.
+    Policy(PolicyArgs),
     /// Plan or execute an installer in an available strong OS sandbox.
     Sandbox(SandboxArgs),
     /// Serve RepoSeal verification tools over MCP stdio.
@@ -113,6 +115,9 @@ struct ScanArgs {
     /// File or directory to inspect.
     #[arg(default_value = ".")]
     path: PathBuf,
+    /// Operator-controlled rooted path exclusions; never auto-discovered from scanned content.
+    #[arg(long)]
+    ignore_file: Option<PathBuf>,
     /// Emit stable JSON.
     #[arg(long)]
     json: bool,
@@ -184,6 +189,18 @@ enum LockCommand {
 struct ManifestArgs {
     #[command(subcommand)]
     command: ManifestCommand,
+}
+
+#[derive(Debug, Args)]
+struct PolicyArgs {
+    #[command(subcommand)]
+    command: PolicyCommand,
+}
+
+#[derive(Debug, Subcommand)]
+enum PolicyCommand {
+    /// Parse, validate, and compile a strict RepoSeal policy.
+    Check { path: PathBuf },
 }
 
 #[derive(Debug, Subcommand)]
@@ -327,7 +344,7 @@ async fn run_cli(cli: Cli) -> Result<u8> {
             Ok(decision_exit(report.decision))
         }
         Commands::Scan(args) => {
-            let report = scan_path(&args.path)?;
+            let report = scan_path_with_ignore(&args.path, args.ignore_file.as_deref())?;
             if args.json {
                 println!("{}", serde_json::to_string_pretty(&report)?);
             } else {
@@ -359,6 +376,7 @@ async fn run_cli(cli: Cli) -> Result<u8> {
         Commands::Guard(args) => guard_command(args).await,
         Commands::Lock(args) => lock_command(args).await,
         Commands::Manifest(args) => manifest_command(args),
+        Commands::Policy(args) => policy_command(args),
         Commands::Sandbox(args) => sandbox_command(args),
         Commands::Mcp => run_mcp().await,
         Commands::Benchmark(args) => benchmark(args),
@@ -656,6 +674,20 @@ fn manifest_command(args: ManifestArgs) -> Result<u8> {
                 manifest.metadata.version,
                 manifest.digest()?,
                 manifest.identities.len()
+            );
+            Ok(0)
+        }
+    }
+}
+
+fn policy_command(args: PolicyArgs) -> Result<u8> {
+    match args.command {
+        PolicyCommand::Check { path } => {
+            let policy = CompiledPolicy::from_path(&path)?;
+            println!(
+                "RepoSeal policy valid: {} (mode: {:?})",
+                path.display(),
+                policy.document().defaults.mode
             );
             Ok(0)
         }

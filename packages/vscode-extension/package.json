@@ -1,0 +1,60 @@
+{
+  "name": "reposeal-vscode",
+  "displayName": "RepoSeal",
+  "description": "Verify repositories, packages, MCP servers, and agent skills before acquisition",
+  "version": "1.0.0",
+  "publisher": "reposeal",
+  "license": "Apache-2.0",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:reposeal.verifyDependency",
+    "onCommand:reposeal.scanWorkspace"
+  ],
+  "main": "dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "reposeal.verifyDependency",
+        "title": "RepoSeal: Verify Dependency"
+      },
+      {
+        "command": "reposeal.scanWorkspace",
+        "title": "RepoSeal: Scan Workspace"
+      }
+    ],
+    "configuration": {
+      "title": "RepoSeal",
+      "properties": {
+        "reposeal.binary": {
+          "type": "string",
+          "default": "reposeal",
+          "description": "RepoSeal binary path"
+        },
+        "reposeal.policy": {
+          "type": "string",
+          "default": "",
+          "description": "Optional strict policy path"
+        },
+        "reposeal.lockfile": {
+          "type": "string",
+          "default": "agent.lock",
+          "description": "Lockfile path relative to workspace"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/vscode": "^1.100.0"
+  }
+}

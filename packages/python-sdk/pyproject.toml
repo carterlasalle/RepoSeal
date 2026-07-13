@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "reposeal"
+version = "1.0.0"
+description = "Typed Python SDK for the RepoSeal supply-chain firewall"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [{ name = "Carter LaSalle" }]
+classifiers = ["Programming Language :: Python :: 3", "Typing :: Typed"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/reposeal"]
+
+[dependency-groups]
+dev = []
