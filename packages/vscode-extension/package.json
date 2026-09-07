@@ -54,7 +54,7 @@
     "test": "node --test test/*.test.mjs"
   },
   "devDependencies": {
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.4.1",
     "@types/vscode": "^1.134.0"
   }
 }
