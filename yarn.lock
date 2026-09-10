@@ -30,10 +30,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/vscode@npm:^1.134.0":
-  version: 1.134.0
-  resolution: "@types/vscode@npm:1.134.0"
-  checksum: 10c0/c027cecc334c84679aefde3884e584cd9294a041578440dc1a4efeef98cd4fdfb0135bcdab420547cc9b60f9630b1b29f2f5841a885ab566ee0fc81c3d7e5d89
+"@types/vscode@npm:^1.136.0":
+  version: 1.136.0
+  resolution: "@types/vscode@npm:1.136.0"
+  checksum: 10c0/be7dedd914cbdb4f95e2847f1f97592a6d06bbe57afa9ff40ac5e848d1e7ac33da5601c9651999e71174273e750da2a0cf8fa88e91420ec1250d5cd5ccb9acdb
   languageName: node
   linkType: hard
 
@@ -42,7 +42,7 @@ __metadata:
   resolution: "reposeal-vscode@workspace:packages/vscode-extension"
   dependencies:
     "@types/node": "npm:^26.4.1"
-    "@types/vscode": "npm:^1.134.0"
+    "@types/vscode": "npm:^1.136.0"
   languageName: unknown
   linkType: soft
 
